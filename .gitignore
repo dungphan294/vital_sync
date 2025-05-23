@@ -1,0 +1,36 @@
+# Ignore Python bytecode cache directories
+backend/__pycache__/
+database/__pycache__/
+
+# Ignore Flutter and Dart tool/build files and IDE configs
+frontend/vital_sync/.dart_tool/
+frontend/vital_sync/.idea/
+frontend/vital_sync/.packages
+frontend/vital_sync/.flutter-plugins
+frontend/vital_sync/.flutter-plugins-dependencies
+frontend/vital_sync/.metadata
+frontend/vital_sync/build/
+frontend/vital_sync/pubspec.lock
+
+# Ignore iOS build artifacts, dependencies, and generated files
+frontend/vital_sync/ios/Flutter/Flutter.framework
+frontend/vital_sync/ios/Flutter/Flutter.podspec
+frontend/vital_sync/ios/Flutter/Generated.xcconfig
+frontend/vital_sync/ios/ServiceDefinitions.json
+frontend/vital_sync/ios/Runner.xcworkspace/
+frontend/vital_sync/ios/Pods/
+frontend/vital_sync/ios/Podfile.lock
+frontend/vital_sync/ios/Podfile.symlinks/
+frontend/vital_sync/ios/Flutter/App.framework
+frontend/vital_sync/ios/Flutter/engine/
+frontend/vital_sync/ios/Flutter/app.flx
+frontend/vital_sync/ios/Flutter/app.zip
+frontend/vital_sync/ios/Flutter/flutter_assets/
+frontend/vital_sync/ios/Flutter/*.xcframework
+
+# Ignore Android build artifacts and local properties
+frontend/vital_sync/android/.gradle/
+frontend/vital_sync/android/app/build/
+frontend/vital_sync/android/local.properties
+
+# These files and directories are ignored to prevent committing build artifacts, IDE settings, dependency caches, and platform-specific generated files to version control. This keeps the repository clean and avoids unnecessary conflicts or large files.
