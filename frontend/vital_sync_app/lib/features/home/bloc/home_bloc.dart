@@ -17,7 +17,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       final bpm = await sensorService.fetchHeartRate();
       final steps = await sensorService.fetchStepCount();
-      emit(HomeLoaded(heartRate: bpm, stepCount: steps));
+      emit(
+        HomeLoaded(
+          heartRate: bpm,
+          stepCount: steps,
+          oxygenLevel: 98.6,
+          exerciseStreak: 5,
+          caloriesBurned: 350,
+        ),
+      );
     } catch (_) {
       emit(HomeError(message: 'Failed to load data'));
     }

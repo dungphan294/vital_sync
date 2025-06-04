@@ -33,4 +33,18 @@ frontend/vital_sync_app/android/.gradle/
 frontend/vital_sync_app/android/app/build/
 frontend/vital_sync_app/android/local.properties
 
-# These files and directories are ignored to prevent committing build artifacts, IDE settings, dependency caches, and platform-specific generated files to version control. This keeps the repository clean and avoids unnecessary conflicts or large files.
+# Ignore VS Code workspace settings
+frontend/vital_sync_app/.vscode/   
+backend/.vscode/
+# Ignore Python cache directories
+backend/__pycache__/
+backend/database/__pycache__/
+backend/crud/__pycache__/
+backend/data/__pycache__/
+backend/models/__pycache__/
+backend/routers/__pycache__/
+backend/schemas/__pycache__/
+alembic/__pycache__/
+alembic/versions/__pycache__/
+# Ignore Python virtual environments
+backend/venv/

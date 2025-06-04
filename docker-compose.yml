@@ -1,0 +1,7 @@
+services:
+  windown:
+    platform: linux/amd64
+    image: 290420/vital_sync:latest
+  raspberry:
+    platform: linux/arm64   
+    image: 290420/vital_sync:latest

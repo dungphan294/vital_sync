@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'features/home/view/home_page.dart';
+import 'package:vital_sync_app/features/main/view/main_page.dart';
 
 /// {@template vital_sync_app}
 /// VitalSync App
@@ -14,9 +14,18 @@ class VitalSyncApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'VitalSync',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomePage(),
+      title: 'Vital Sync',
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.red,
+        ).copyWith(secondary: Colors.red),
+        textTheme: ThemeData.light().textTheme.apply(
+          bodyColor: Colors.red,
+          displayColor: Colors.red,
+        ),
+      ),
+      home: const MainPage(),
     );
   }
 }

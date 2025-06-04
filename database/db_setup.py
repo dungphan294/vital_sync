@@ -1,37 +1,69 @@
 import sqlite3
-import os
+from datetime import datetime
 
-class Database:
-    def __init__(self, db_path):
-        self.db_path = db_path
+### SQLite database setup for storing LED states and heart rate data
+class SqliteDB:
+    """A simple database connection class to manage SQLite database operations."""
+    
+    def __init__(self, db_name):
+        """Initialize the database connection and create the table if not exists."""
+        self.db_name = db_name
+        self.conn = sqlite3.connect(self.db_name)
+        self.cursor = self.conn.cursor()
+        self._create_table()
 
-    def create_db(self):
-        # Explicitly create the database file if it doesn't exist
-        if not os.path.exists(self.db_path):
-            with sqlite3.connect(self.db_path):
-                pass  # Just create the file
+    def _create_table(self):
+        """Create the led_state table if it doesn't exist."""
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS led_state (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                state TEXT,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        # Create heart rate table
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS heart_rate (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                bpm INTEGER,
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        self.conn.commit()
 
-    def connect(self):
-        return sqlite3.connect(self.db_path)
+    def insert_led_state(self, state):
+        """Insert LED state (HIGH/LOW) into the database."""
+        try:
+            self.cursor.execute("INSERT INTO led_state (state) VALUES (?)", (state,))
+            self.conn.commit()  # Commit the transaction
+            print(f"LED state '{state}' inserted successfully.")
+        except sqlite3.Error as e:
+            print(f"Error inserting data: {e}")
 
-    def create_table(self, table_name, columns):
-        columns_def = ', '.join([f"{col} {ctype}" for col, ctype in columns.items()])
-        query = f"CREATE TABLE IF NOT EXISTS {table_name} ({columns_def});"
-        with self.connect() as conn:
-            cursor = conn.cursor()
-            cursor.execute(query)
-            conn.commit()
+    def insert_heart_rate(self, bpm):
+        """Insert heart rate data (BPM) into the database."""
+        try:
+            self.cursor.execute("INSERT INTO heart_rate (bpm) VALUES (?)", (bpm,))
+            self.conn.commit()  # Commit the transaction
+            print(f"Heart rate '{bpm}' BPM inserted successfully.")
+        except sqlite3.Error as e:
+            print(f"Error inserting heart rate data: {e}")
 
-# Example usage:
-if __name__ == "__main__":
-    db = Database("example.db")
-    db.create_db()  # Explicitly create the database file
-    db.create_table(
-        "users",
-        {
-            "id": "INTEGER PRIMARY KEY AUTOINCREMENT",
-            "username": "TEXT NOT NULL",
-            "email": "TEXT",
-            "created_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
-        }
-    )
+    def fetch_led_states(self):
+        """Fetch all stored LED states."""
+        self.cursor.execute("SELECT * FROM led_state")
+        rows = self.cursor.fetchall()
+        return rows
+    
+    def fetch_heart_rate(self):
+        """Fetch all stored heart rate records."""
+        self.cursor.execute("SELECT * FROM heart_rate")
+        rows = self.cursor.fetchall()
+        return rows
+
+    def close_connection(self):
+        """Close the database connection."""
+        self.conn.close()
+        print("Database connection closed.")
+
