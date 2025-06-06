@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/services/sensor_service.dart';
+import '../../../core/services/vital_sync_api_service.dart';
+import '../../../data/repositories/data_repository.dart';
 import '../../home/bloc/home_bloc.dart';
 import '../../home/bloc/home_event.dart';
 import '../../home/bloc/home_state.dart';
@@ -13,9 +14,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (_) =>
-              HomeBloc(sensorService: SensorService())..add(LoadSensorData()),
+      create: (_) => HomeBloc(
+        repository: DataRepository(apiService: VitalSyncApiService()),
+      )..add(LoadSensorData()),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Vital Sync Homepage'),

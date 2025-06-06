@@ -15,19 +15,19 @@ class VitalSyncApiService {
     );
   }
 
-  Future<List<dynamic>> get(String endpoint) async {
+  Future<dynamic> get(String endpoint) async {
     try {
-      Response response = await _dio.get("$endpoint/");
+      final Response response = await _dio.get(endpoint);
       return response.data;
     } catch (e) {
-      print("Error fetching users: $e");
-      return [];
+      print("Error fetching data: $e");
+      return null;
     }
   }
 
   Future<dynamic> post(String endpoint, Map<String, dynamic> data) async {
     try {
-      Response response = await _dio.post("$endpoint/", data: data);
+      final Response response = await _dio.post(endpoint, data: data);
       return response.data;
     } catch (e) {
       print("Error posting data: $e");
@@ -37,7 +37,7 @@ class VitalSyncApiService {
 
   Future<dynamic> put(String endpoint, Map<String, dynamic> data) async {
     try {
-      Response response = await _dio.put("$endpoint/", data: data);
+      final Response response = await _dio.put(endpoint, data: data);
       return response.data;
     } catch (e) {
       print("Error updating data: $e");
@@ -47,7 +47,7 @@ class VitalSyncApiService {
 
   Future<dynamic> delete(String endpoint) async {
     try {
-      Response response = await _dio.delete("$endpoint/");
+      final Response response = await _dio.delete(endpoint);
       return response.data;
     } catch (e) {
       print("Error deleting data: $e");

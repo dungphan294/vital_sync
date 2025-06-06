@@ -6,8 +6,19 @@ class DataRepository {
 
   DataRepository({required this.apiService});
 
-  Future<List<Data>> fetchUsers() async {
-    final data = await apiService.get('users');
-    return data.map((json) => Data.fromJson(json)).toList();
+  /// Fetch a paginated list of data records for the given [userId].
+  Future<List<Data>> searchData({
+    required String userId,
+    int page = 0,
+    int limit = 100,
+  }) async {
+    final response = await apiService
+        .get('data/search?user_id=$userId&page=$page&limit=$limit');
+
+    if (response is Map<String, dynamic>) {
+      final List<dynamic> list = response['data'] ?? [];
+      return list.map((e) => Data.fromJson(e)).toList();
+    }
+    return [];
   }
 }

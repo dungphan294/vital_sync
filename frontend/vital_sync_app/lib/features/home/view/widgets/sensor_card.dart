@@ -6,7 +6,7 @@ class SensorCard extends StatelessWidget {
   final String label;
   final Color labelColor;
   final String value;
-  final ElevatedButton? actionButton;
+  final Widget? actionButton;
 
   const SensorCard({
     super.key,
@@ -15,7 +15,7 @@ class SensorCard extends StatelessWidget {
     required this.label,
     required this.labelColor,
     required this.value,
-    required this.actionButton,
+    this.actionButton,
   });
 
   @override
@@ -58,6 +58,10 @@ class SensorCard extends StatelessWidget {
                       color: labelColor,
                     ),
                   ),
+                  if (actionButton != null) ...[
+                    const SizedBox(height: 8),
+                    actionButton!,
+                  ],
                 ],
               ),
             ],

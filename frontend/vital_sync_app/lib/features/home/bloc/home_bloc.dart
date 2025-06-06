@@ -1,13 +1,13 @@
 // features/home/bloc/home_bloc.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../core/services/sensor_service.dart' as sensor_service;
+import 'package:vital_sync_app/data/repositories/data_repository.dart';
 import 'package:vital_sync_app/features/home/bloc/home_event.dart';
 import 'package:vital_sync_app/features/home/bloc/home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final sensor_service.SensorService sensorService;
+  final DataRepository repository;
 
-  HomeBloc({required this.sensorService}) : super(HomeInitial()) {
+  HomeBloc({required this.repository}) : super(HomeInitial()) {
     on<LoadSensorData>(_loadData);
     on<RefreshSensorData>(_loadData);
   }
@@ -15,15 +15,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _loadData(HomeEvent event, Emitter<HomeState> emit) async {
     emit(HomeLoading());
     try {
-      final bpm = await sensorService.fetchHeartRate();
-      final steps = await sensorService.fetchStepCount();
+      final records = await repository.searchData(userId: 'admin', limit: 1);
+      if (records.isEmpty) {
+        emit(HomeError(message: 'No data found'));
+        return;
+      }
+      final latest = records.first;
       emit(
         HomeLoaded(
-          heartRate: bpm,
-          stepCount: steps,
-          oxygenLevel: 98.6,
-          exerciseStreak: 5,
-          caloriesBurned: 350,
+          heartRate: latest.heartRate,
+          stepCount: latest.stepCounts,
+          oxygenLevel: latest.oxygenSaturation.toDouble(),
+          exerciseStreak: 0,
+          caloriesBurned: 0,
         ),
       );
     } catch (_) {
