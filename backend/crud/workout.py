@@ -12,7 +12,7 @@ def create_workouts(db: Session, workout_list: List[WorkoutCreate]) -> List[Work
         if not db.query(User).filter_by(user_id=data.user_id).first():
             raise ValueError(f"user_id {data.user_id} not found")
 
-        db_data = Data(**data.model_dump())
+        db_data = Workout(**data.model_dump())
         db.add(db_data)
         created.append(db_data)
 

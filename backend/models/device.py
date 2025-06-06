@@ -1,6 +1,7 @@
 from sqlalchemy import Column, String, TIMESTAMP
 from backend.database import Base
 
+
 class Device(Base):
     __tablename__ = "devices"
 

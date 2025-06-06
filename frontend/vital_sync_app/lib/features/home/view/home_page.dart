@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
               HomeBloc(sensorService: SensorService())..add(LoadSensorData()),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('VitalSync Dashboard'),
+          title: const Text('Vital Sync Homepage'),
           centerTitle: true,
         ),
         body: BlocBuilder<HomeBloc, HomeState>(

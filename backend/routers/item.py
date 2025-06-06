@@ -6,9 +6,11 @@ from backend.crud import item as crud_item
 
 router = APIRouter()
 
+
 @router.post("/", response_model=ItemResponse)
 def create(item: ItemCreate, db: Session = Depends(get_db)):
     return crud_item.create_item(db, item)
+
 
 @router.get("/{item_id}", response_model=ItemResponse)
 def read(item_id: int, db: Session = Depends(get_db)):

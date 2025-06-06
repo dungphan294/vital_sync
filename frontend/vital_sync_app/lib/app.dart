@@ -15,16 +15,7 @@ class VitalSyncApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Vital Sync',
-      theme: ThemeData(
-        primarySwatch: Colors.red,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.red,
-        ).copyWith(secondary: Colors.red),
-        textTheme: ThemeData.light().textTheme.apply(
-          bodyColor: Colors.red,
-          displayColor: Colors.red,
-        ),
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MainPage(),
     );
   }

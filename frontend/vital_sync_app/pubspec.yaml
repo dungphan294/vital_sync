@@ -31,13 +31,14 @@ dependencies:
   bloc: ^9.0.0
   flutter:
     sdk: flutter
-  flutter_bloc: ^9.1.0
-  package_info_plus: ^4.2.0
-  flutter_blue_plus: ^1.35.5
-  fl_chart: ^0.66.0
-  intl: ^0.18.1
-  table_calendar: ^3.0.9
-  syncfusion_flutter_gauges: ^20.2.47
+  flutter_bloc: ^9.1.0 # State management library that helps implement the BLoC pattern in Flutter
+  package_info_plus: ^4.2.0 # Package for retrieving app information
+  flutter_blue_plus: ^1.35.5 # Bluetooth Low Energy (BLE) library for Flutter
+  fl_chart: ^0.66.0 # Flutter chart library for creating beautiful charts
+  dio: ^5.8.0+1 # HTTP client for Dart, used for making network requests
+  intl: ^0.18.1 # Internationalization and localization support
+  table_calendar: ^3.0.9 # Calendar widget for Flutter, useful for displaying and selecting dates
+  syncfusion_flutter_gauges: ^20.2.47 # Flutter package for creating gauges and dials
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -71,7 +72,9 @@ flutter_launcher_icons:
 
 # The following section is specific to Flutter packages.
 flutter:
-
+  assets:
+    - assets/images/
+    - assets/icon/
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -1,3 +1,15 @@
-abstract class AboutEvent {}
+import 'package:equatable/equatable.dart';
 
-class LoadAppInfo extends AboutEvent {}
+abstract class AboutEvent extends Equatable {
+  const AboutEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class LoadAppInfo extends AboutEvent {
+  const LoadAppInfo();
+
+  @override
+  List<Object?> get props => [];
+}

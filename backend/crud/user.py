@@ -1,14 +1,18 @@
 import hashlib
 from sqlalchemy.orm import Session
 from backend.models.user import User
-from backend.schemas.user import UserCreate, UserSafeUpdate, UserSecureUpdate
 from backend.models.data import Data
 from backend.models.workout import Workout
+from backend.models.user_device import UserDevice
+from backend.models.user_phone import UserPhone
+from backend.schemas.user import UserCreate, UserSafeUpdate, UserSecureUpdate
 from backend.crud.crud_shared import save_one_record, save_multiple_records
 from typing import List
 
+
 def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
 
 def get_user_by_id(db: Session, user_id: str):
     return db.query(User).filter(User.user_id == user_id).first()
@@ -21,21 +25,27 @@ def get_user_by_id(db: Session, user_id: str):
 #     db.refresh(db_user)
 #     return db_user
 
+
 def create_user(db: Session, user: UserCreate):
     user_dict = user.model_dump()
-    user_dict["password"] = hashlib.sha256(user_dict["password"].encode()).hexdigest()
+    user_dict["password"] = hashlib.sha256(
+        user_dict["password"].encode()).hexdigest()
     return save_one_record(db, User, user.model_copy(update=user_dict))
+
 
 def create_users(db: Session, users: List[UserCreate]):
     hashed = []
     for user in users:
         user_dict = user.model_dump()
-        user_dict["password"] = hashlib.sha256(user_dict["password"].encode()).hexdigest()
+        user_dict["password"] = hashlib.sha256(
+            user_dict["password"].encode()).hexdigest()
         hashed.append(user.model_copy(update=user_dict))
     return save_multiple_records(db, User, hashed)
 
+
 def get_users(db: Session):
     return db.query(User).all()
+
 
 def authenticate_user(db: Session, username: str, password: str):
     user = db.query(User).filter(User.username == username).first()
@@ -44,6 +54,7 @@ def authenticate_user(db: Session, username: str, password: str):
     if user.password != hash_password(password):
         return None
     return user
+
 
 def update_user_safe(db: Session, user_id: str, update_data: UserSafeUpdate):
     db_user = get_user_by_id(db, user_id)
@@ -55,6 +66,7 @@ def update_user_safe(db: Session, user_id: str, update_data: UserSafeUpdate):
     db.commit()
     db.refresh(db_user)
     return db_user
+
 
 def update_user_secure(db: Session, user_id: str, update_data: UserSecureUpdate):
     db_user = get_user_by_id(db, user_id)
@@ -80,9 +92,17 @@ def update_user_secure(db: Session, user_id: str, update_data: UserSecureUpdate)
 
 def delete_user(db: Session, user_id: str):
     if db.query(Workout).filter_by(user_id=user_id).first():
-        raise ValueError(f"Cannot delete user '{user_id}' — referenced in workouts records")
+        raise ValueError(
+            f"Cannot delete user '{user_id}' — referenced in workouts records")
     if db.query(Data).filter_by(user_id=user_id).first():
-        raise ValueError(f"Cannot delete user '{user_id}' — referenced in data records")
+        raise ValueError(
+            f"Cannot delete user '{user_id}' — referenced in data records")
+    if db.query(UserDevice).filter_by(user_id=user_id).first():
+        raise ValueError(
+            f"Cannot delete user_phone '{user_id}' — referenced in user_device records")
+    if db.query(UserPhone).filter_by(user_id=user_id).first():
+        raise ValueError(
+            f"Cannot delete user_phone '{user_id}' — referenced in user_device records")
     db_user = get_user_by_id(db, user_id)
     if not db_user:
         return None

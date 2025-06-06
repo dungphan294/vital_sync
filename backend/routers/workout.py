@@ -10,7 +10,7 @@ router = APIRouter(prefix="/workouts", tags=["Workouts"])
 @router.post("/", response_model=WorkoutResponse)
 def create_data(data: WorkoutCreate, db: Session = Depends(get_db)):
     try:
-        return WorkoutCreate._save_data_list(db, [data])[0]
+        return crud_workout.create_workouts(db, [data])[0]
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -18,10 +18,10 @@ def create_data(data: WorkoutCreate, db: Session = Depends(get_db)):
 @router.post("/bulk", response_model=List[WorkoutResponse])
 def create_bulk_data(data_list: List[WorkoutCreate], db: Session = Depends(get_db)):
     try:
-        return WorkoutCreate._save_data_list(db, data_list)
+        return crud_workout.create_workouts(db, data_list)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    
+
     
 # @router.post("/", response_model=WorkoutResponse)
 # def create_workout(workout: WorkoutCreate, db: Session = Depends(get_db)):

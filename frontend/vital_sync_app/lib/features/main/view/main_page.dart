@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vital_sync_app/features/about/view/about_page.dart';
 import 'package:vital_sync_app/features/home/view/home_page.dart';
-
-class NavigationCubit extends Cubit<int> {
-  NavigationCubit() : super(0);
-  void changeTab(int index) => emit(index);
-}
+import 'package:vital_sync_app/features/main/bloc/navigation_cubit.dart';
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -20,7 +16,9 @@ class MainPage extends StatelessWidget {
       child: BlocBuilder<NavigationCubit, int>(
         builder: (context, index) {
           return Scaffold(
-            appBar: AppBar(title: const Text('VitalSync')),
+            appBar: AppBar(
+              title: Image.asset('assets/images/logo.png', height: 40),
+            ),
             body: _pages[index],
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: index,
