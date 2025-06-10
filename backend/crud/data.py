@@ -5,6 +5,7 @@ from backend.models.user import User
 from backend.models.phone import Phone
 from backend.models.device import Device
 from backend.models.workout import Workout
+from backend.crud.workout import create_workouts
 from typing import List, Optional
 
 
@@ -24,9 +25,16 @@ def create_data_list(db: Session, data_list: List[DataCreate]) -> List[Data]:
         if data.device_id not in device_ids:
             raise ValueError(f"device_id {data.device_id} not found")
         if data.workout_id and (data.workout_id, data.user_id) not in workout_keys:
-            raise ValueError(
-                f"(workout_id, user_id) ({data.workout_id}, {data.user_id}) not found in workouts")
-
+            from backend.schemas.workout import WorkoutCreate
+            workout_create = WorkoutCreate(
+                workout_id=data.workout_id,
+                user_id=data.user_id,
+                start_time=data.timestamp,
+            )
+            create_workouts(db, [workout_create])
+            # Update workout_keys to include the newly created workout
+            workout_keys.add((data.workout_id, data.user_id))
+            print(f"Created workout {data.workout_id} for user {data.user_id}")
         db_data = Data(**data.model_dump())
         db.add(db_data)
         created.append(db_data)

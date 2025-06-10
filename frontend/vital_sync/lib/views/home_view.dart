@@ -1,26 +1,26 @@
 // views/ble_home_view.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../viewmodels/ble_home_viewmodel.dart';
+import '../viewmodels/home_viewmodel.dart';
 import '../models/vital_type_model.dart';
 import 'vital_detail_view.dart';
 import '../widgets/vital_card_widget.dart';
 import '../widgets/connection_status_widget.dart';
 
-class BleHomeView extends StatefulWidget {
-  const BleHomeView({super.key});
+class HomeView extends StatefulWidget {
+  const HomeView({super.key});
 
   @override
-  State<BleHomeView> createState() => _BleHomeViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
-class _BleHomeViewState extends State<BleHomeView> {
-  late BleHomeViewModel _viewModel;
+class _HomeViewState extends State<HomeView> {
+  late HomeViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = BleHomeViewModel();
+    _viewModel = HomeViewModel();
     _viewModel.initialize();
   }
 
@@ -32,21 +32,28 @@ class _BleHomeViewState extends State<BleHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BleHomeViewModel>.value(
+    return ChangeNotifierProvider<HomeViewModel>.value(
       value: _viewModel,
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: _buildAppBar(context),
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: Column(
-              children: [
-                _buildProfileButton(context),
-                _buildConnectionStatus(),
-                _buildVitalSignsGrid(),
-              ],
-            ),
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    _buildProfileButton(context),
+                    _buildConnectionStatus(),
+                    // _buildApiGrid(),
+                    _buildSyncButton(context),
+                    _buildVitalSignsGrid(),
+                  ]),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -57,18 +64,10 @@ class _BleHomeViewState extends State<BleHomeView> {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      title: Text(
-        "VitalSync",
-        style: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w300,
-          letterSpacing: 0.5,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
+      title: Image.asset('assets/images/logo.png', height: 40),
       centerTitle: true,
       actions: [
-        Consumer<BleHomeViewModel>(
+        Consumer<HomeViewModel>(
           builder: (context, viewModel, child) {
             if (viewModel.isScanning) return const SizedBox.shrink();
 
@@ -147,8 +146,18 @@ class _BleHomeViewState extends State<BleHomeView> {
     );
   }
 
+  Widget _buildSyncButton(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.analytics, color: Theme.of(context).colorScheme.primary),
+      onPressed: () {
+        // Trigger sync action
+        _viewModel.manualRefresh();
+      },
+    );
+  }
+
   Widget _buildConnectionStatus() {
-    return Consumer<BleHomeViewModel>(
+    return Consumer<HomeViewModel>(
       builder: (context, viewModel, child) {
         return ConnectionStatusWidget(
           isConnected: viewModel.isConnected,
@@ -163,7 +172,7 @@ class _BleHomeViewState extends State<BleHomeView> {
 
   Widget _buildVitalSignsGrid() {
     return Expanded(
-      child: Consumer<BleHomeViewModel>(
+      child: Consumer<HomeViewModel>(
         builder: (context, viewModel, child) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,

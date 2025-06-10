@@ -1,10 +1,13 @@
 from fastapi import FastAPI
 from backend.database import Base, engine  # adjust import if needed
-from backend.routers import user, phone, device, workout, data, user_device, user_phone  # under backend/api/
+from backend.routers import user, phone, device, workout, data, user_device, user_phone  # under backend/api/from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
+
 # Ensure the tables are created before the app starts
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"])
 
 # Include routes
 # app.include_router(item.router, prefix="/items", tags=["items"])

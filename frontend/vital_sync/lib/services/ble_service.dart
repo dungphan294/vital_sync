@@ -1,24 +1,43 @@
 // services/bluetooth_service.dart
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'dart:async';
 import '../models/vital_signs_model.dart';
 import '../models/device_connection_model.dart';
+import 'backend_api.dart';
 
 class BLEService {
+  // ignore: constant_identifier_names
   static const String TARGET_DEVICE_NAME = "ESP32 Fitness Band";
 
   // BLE UUIDs
+  // ignore: non_constant_identifier_names
   static final Guid PLX_SERVICE_UUID = Guid(
     "00001822-0000-1000-8000-00805F9B34FB",
   );
+  // ignore: non_constant_identifier_names
   static final Guid PLX_CHAR_UUID = Guid(
     "00002A5F-0000-1000-8000-00805F9B34FB",
   );
+  // ignore: non_constant_identifier_names
   static final Guid STEP_SERVICE_UUID = Guid(
     "0000FF10-0000-1000-8000-00805F9B34FB",
   );
+  // ignore: non_constant_identifier_names
   static final Guid STEP_CHAR_UUID = Guid(
     "0000FF11-0000-1000-8000-00805F9B34FB",
+  );
+
+  // ignore: non_constant_identifier_names
+  static final Guid FILE_SERVICE_UUID = Guid(
+    "12345678-1234-5678-1234-56789ABCDEF0",
+  );
+
+  // ignore: non_constant_identifier_names
+  static final Guid FILE_CHAR_UUID = Guid(
+    "ABCDEF01-2345-6789-ABCD-EF0123456789",
   );
 
   // Singleton instance
@@ -112,6 +131,7 @@ class BLEService {
         (results) {
           for (ScanResult result in results) {
             if (result.device.platformName == TARGET_DEVICE_NAME) {
+              // ignore: avoid_print
               print("Found target device: ${result.device.platformName}");
               FlutterBluePlus.stopScan();
               _isScanning = false;
@@ -121,6 +141,7 @@ class BLEService {
           }
         },
         onError: (error) {
+          // ignore: avoid_print
           print("Scan error: $error");
           _handleScanError(error);
         },
@@ -130,12 +151,14 @@ class BLEService {
       _scanTimer?.cancel();
       _scanTimer = Timer(const Duration(seconds: 12), () {
         if (!_disposed && _connectionState.state != ConnectionState.connected) {
+          // ignore: avoid_print
           print("Scan timeout, restarting scan...");
           _isScanning = false;
           _restartScanAfterDelay();
         }
       });
     } catch (e) {
+      // ignore: avoid_print
       print("Start scan error: $e");
       _isScanning = false;
       _updateConnectionState(
@@ -192,12 +215,14 @@ class BLEService {
       _connectionSubscription?.cancel();
       _connectionSubscription = _device!.connectionState.listen(
         (state) {
+          // ignore: avoid_print
           print("Connection state changed: $state");
           if (state == BluetoothConnectionState.disconnected) {
             _handleDisconnection();
           }
         },
         onError: (error) {
+          // ignore: avoid_print
           print("Connection state error: $error");
           _handleDisconnection();
         },
@@ -205,6 +230,7 @@ class BLEService {
 
       await _discoverServices();
     } catch (e) {
+      // ignore: avoid_print
       print("Connection failed: $e");
       _updateConnectionState(
         ConnectionState.disconnected,
@@ -217,7 +243,7 @@ class BLEService {
 
   void _handleDisconnection() {
     if (_disposed) return;
-
+    // ignore: avoid_print
     print("Device disconnected, restarting scan...");
     _updateConnectionState(ConnectionState.disconnected);
     _updateVitalSigns(VitalSignsModel()); // Clear vital signs
@@ -230,9 +256,11 @@ class BLEService {
 
     try {
       List<BluetoothService> services = await _device!.discoverServices();
+      // ignore: avoid_print
       print("Discovered ${services.length} services");
 
       for (var service in services) {
+        // ignore: avoid_print
         print("Service UUID: ${service.uuid}");
 
         if (service.uuid == PLX_SERVICE_UUID) {
@@ -242,8 +270,16 @@ class BLEService {
         if (service.uuid == STEP_SERVICE_UUID) {
           await _setupStepCounterService(service);
         }
+
+        if (service.uuid == FILE_SERVICE_UUID) {
+          // Handle file transfer service if needed
+          // ignore: avoid_print
+          print("File transfer service found, but not implemented yet");
+          await _setupFileTransferService(service);
+        }
       }
     } catch (e) {
+      // ignore: avoid_print
       print("Service discovery error: $e");
       _updateConnectionState(
         ConnectionState.connected,
@@ -258,14 +294,14 @@ class BLEService {
         (c) => c.uuid == PLX_CHAR_UUID,
         orElse: () => throw Exception("PLX characteristic not found"),
       );
-
+      // ignore: avoid_print
       print("Setting up pulse oximeter notifications");
       await characteristic.setNotifyValue(true);
 
       characteristic.onValueReceived.listen(
         (value) {
           if (_disposed) return;
-
+          // ignore: avoid_print
           print(
             "PLX data received: ${value.map((e) => e.toRadixString(16)).join(' ')}",
           );
@@ -273,7 +309,7 @@ class BLEService {
           if (value.length >= 5) {
             final spo2 = _decodeSfloat(value[1], value[2]);
             final heartRate = _decodeSfloat(value[3], value[4]);
-
+            // ignore: avoid_print
             print("SpO2: $spo2, HR: $heartRate");
 
             _updateVitalSigns(
@@ -282,10 +318,12 @@ class BLEService {
           }
         },
         onError: (error) {
+          // ignore: avoid_print
           print("PLX characteristic error: $error");
         },
       );
     } catch (e) {
+      // ignore: avoid_print
       print("Error setting up pulse oximeter service: $e");
     }
   }
@@ -296,30 +334,33 @@ class BLEService {
         (c) => c.uuid == STEP_CHAR_UUID,
         orElse: () => throw Exception("Step characteristic not found"),
       );
-
+      // ignore: avoid_print
       print("Setting up step counter notifications");
       await characteristic.setNotifyValue(true);
 
       characteristic.onValueReceived.listen(
         (value) {
           if (_disposed) return;
-
+          // ignore: avoid_print
           print(
             "Step data received: ${value.map((e) => e.toRadixString(16)).join(' ')}",
           );
 
           if (value.length >= 2) {
             final steps = value[0] + (value[1] << 8);
+            // ignore: avoid_print
             print("Steps: $steps");
 
             _updateVitalSigns(_currentVitals.copyWith(steps: steps));
           }
         },
         onError: (error) {
+          // ignore: avoid_print
           print("Step characteristic error: $error");
         },
       );
     } catch (e) {
+      // ignore: avoid_print
       print("Error setting up step counter service: $e");
     }
   }
@@ -379,5 +420,50 @@ class BLEService {
     await disconnect();
     await Future.delayed(const Duration(seconds: 1));
     startScan();
+  }
+
+  final _buffer = BytesBuilder();
+
+  Future<void> _setupFileTransferService(BluetoothService service) async {
+    final characteristic = service.characteristics.firstWhere(
+      (c) => c.uuid == FILE_CHAR_UUID,
+    );
+
+    await characteristic.setNotifyValue(true, timeout: 60);
+    characteristic.onValueReceived.listen((value) async {
+      if (value.isEmpty) {
+        // EOF — we have the full file
+        final bytes = _buffer.takeBytes();
+        _buffer.clear();
+
+        final jsonStr = utf8.decode(bytes);
+        // Optional: validate JSON here
+        await _sendToServer(jsonStr);
+      } else {
+        _buffer.add(value);
+      }
+    });
+  }
+
+  Future<void> _sendToServer(String json) async {
+    BackendApi api = BackendApi();
+    try {
+      // Validate JSON format
+      final parsedJson = jsonDecode(json);
+      if (parsedJson is! Map<String, dynamic>) {
+        throw FormatException("Invalid JSON format");
+      }
+      // Convert to JSON string
+      final jsonData = jsonEncode(parsedJson);
+
+      // Send the JSON data to the server
+      await api.post('/data/', {'data': jsonData});
+      // ignore: avoid_print
+      print("Data uploaded successfully");
+    } catch (e) {
+      // ignore: avoid_print
+      print("Error uploading data: $e");
+      // Optionally, handle retry logic here
+    }
   }
 }

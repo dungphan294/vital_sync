@@ -7,7 +7,7 @@ import '../models/device_connection_model.dart';
 import '../models/vital_type_model.dart';
 import '../services/ble_service.dart';
 
-class BleHomeViewModel extends ChangeNotifier {
+class HomeViewModel extends ChangeNotifier {
   final BLEService _bluetoothService = BLEService();
 
   StreamSubscription<VitalSignsModel>? _vitalSignsSubscription;
