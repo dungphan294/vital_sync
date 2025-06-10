@@ -1,0 +1,117 @@
+// viewmodels/ble_home_viewmodel.dart
+import 'dart:ui';
+import 'package:flutter/foundation.dart';
+import 'dart:async';
+import '../models/vital_signs_model.dart';
+import '../models/device_connection_model.dart';
+import '../models/vital_type_model.dart';
+import '../services/ble_service.dart';
+
+class BleHomeViewModel extends ChangeNotifier {
+  final BLEService _bluetoothService = BLEService();
+
+  StreamSubscription<VitalSignsModel>? _vitalSignsSubscription;
+  StreamSubscription<DeviceConnectionModel>? _connectionSubscription;
+
+  VitalSignsModel _vitalSigns = VitalSignsModel();
+  DeviceConnectionModel _connectionState = DeviceConnectionModel(
+    state: ConnectionState.disconnected,
+  );
+
+  // Getters
+  VitalSignsModel get vitalSigns => _vitalSigns;
+  DeviceConnectionModel get connectionState => _connectionState;
+
+  bool get isConnected => _connectionState.isConnected;
+  bool get isScanning => _connectionState.isScanning;
+  bool get isDisconnected => _connectionState.isDisconnected;
+
+  String get connectionStatusText {
+    switch (_connectionState.state) {
+      case ConnectionState.connected:
+        return "Connected to ${_connectionState.deviceName ?? 'ESP32'}";
+      case ConnectionState.scanning:
+        return "Scanning for device...";
+      case ConnectionState.connecting:
+        return "Connecting...";
+      case ConnectionState.disconnected:
+        return "Disconnected";
+    }
+  }
+
+  Color get connectionStatusColor {
+    switch (_connectionState.state) {
+      case ConnectionState.connected:
+        return const Color(0xFF4CAF50); // Green
+      case ConnectionState.scanning:
+      case ConnectionState.connecting:
+        return const Color(0xFFFF9800); // Orange
+      case ConnectionState.disconnected:
+        return const Color(0xFFF44336); // Red
+    }
+  }
+
+  // Vital sign getters with proper formatting
+  String get heartRateValue => _vitalSigns.heartRate?.toString() ?? "--";
+  String get spo2Value => _vitalSigns.spo2?.toString() ?? "--";
+  String get stepsValue => _vitalSigns.steps?.toString() ?? "--";
+
+  int? getVitalValue(VitalType type) {
+    switch (type) {
+      case VitalType.heartRate:
+        return _vitalSigns.heartRate;
+      case VitalType.spo2:
+        return _vitalSigns.spo2;
+      case VitalType.steps:
+        return _vitalSigns.steps;
+    }
+  }
+
+  String getVitalValueString(VitalType type) {
+    final value = getVitalValue(type);
+    return value?.toString() ?? "--";
+  }
+
+  void initialize() {
+    _subscribeToStreams();
+    startScan();
+  }
+
+  void _subscribeToStreams() {
+    _vitalSignsSubscription = _bluetoothService.vitalSignsStream.listen((
+      vitals,
+    ) {
+      _vitalSigns = vitals;
+      notifyListeners();
+    });
+
+    _connectionSubscription = _bluetoothService.connectionStream.listen((
+      connection,
+    ) {
+      _connectionState = connection;
+      notifyListeners();
+    });
+  }
+
+  Future<void> startScan() async {
+    await _bluetoothService.startScan();
+  }
+
+  Future<void> disconnect() async {
+    await _bluetoothService.disconnect();
+  }
+
+  void manualRefresh() {
+    if (!isConnected && !isScanning) {
+      startScan();
+    }
+  }
+
+  @override
+  void dispose() {
+    _vitalSignsSubscription?.cancel();
+    _connectionSubscription?.cancel();
+    _bluetoothService.dispose();
+    super.dispose();
+  }
+}
