@@ -153,7 +153,7 @@ class _HomeViewState extends State<HomeView> {
           icon: Icon(Icons.sync, color: Theme.of(context).colorScheme.primary),
           onPressed: () {
             // Trigger sync action or open processing
-            viewModel.manualRefresh();
+            viewModel.manualRefresh(); // <‑– rescans BLE
           },
         );
       },

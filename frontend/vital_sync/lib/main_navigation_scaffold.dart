@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vital_sync/views/analytic_view.dart';
+// import 'package:vital_sync/views/analytic_view.dart';
 import 'package:vital_sync/views/chatbot_view.dart';
 import 'package:vital_sync/views/profile_view.dart';
 import 'views/home_view.dart';
@@ -17,7 +17,7 @@ class _MainNavigationScaffoldState extends State<MainNavigationScaffold> {
 
   final List<Widget> _pages = const [
     HomeView(),
-    AnalyticView(),
+    // AnalyticView(),
     ChatbotView(), // Placeholder for Analytics, can be replaced
     ProfileView(),
   ];

@@ -14,8 +14,8 @@ class HomeViewModel extends ChangeNotifier {
 
   StreamSubscription<VitalSignsModel>? _vitalSignsSubscription;
   StreamSubscription<DeviceConnectionModel>? _connectionSubscription;
+  // StreamSubscription<Data>? _dataSubscription;
   StreamSubscription<bool>? _fileNotifySubscription;
-  StreamSubscription<Data>? _dataSubscription;
   bool _hasFileData = false;
 
   VitalSignsModel _vitalSigns = VitalSignsModel();
@@ -97,7 +97,7 @@ class HomeViewModel extends ChangeNotifier {
       vitals,
     ) {
       _vitalSigns = vitals;
-      BackendApi().post('/data/', {
+      BackendApi().post('/realtime/', {
         'heart_rate': vitals.heartRate,
         'oxygen_saturation': vitals.spo2,
         'step_counts': vitals.steps,
