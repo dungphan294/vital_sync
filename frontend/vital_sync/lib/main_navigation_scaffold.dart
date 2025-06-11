@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:vital_sync/views/analytic_view.dart';
+import 'package:vital_sync/views/chatbot_view.dart';
 import 'package:vital_sync/views/profile_view.dart';
 import 'views/home_view.dart';
-import 'main.dart' show SimpleChart;
 import 'widgets/navigation_bar_widget.dart';
 
 class MainNavigationScaffold extends StatefulWidget {
@@ -16,8 +17,8 @@ class _MainNavigationScaffoldState extends State<MainNavigationScaffold> {
 
   final List<Widget> _pages = const [
     HomeView(),
-    SimpleChart(),
-    SimpleChart(), // Placeholder for Analytics, can be replaced
+    AnalyticView(),
+    ChatbotView(), // Placeholder for Analytics, can be replaced
     ProfileView(),
   ];
 

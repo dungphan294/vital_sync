@@ -12,6 +12,9 @@ class HomeViewModel extends ChangeNotifier {
 
   StreamSubscription<VitalSignsModel>? _vitalSignsSubscription;
   StreamSubscription<DeviceConnectionModel>? _connectionSubscription;
+  StreamSubscription<bool>? _fileNotifySubscription;
+
+  bool _hasFileData = false;
 
   VitalSignsModel _vitalSigns = VitalSignsModel();
   DeviceConnectionModel _connectionState = DeviceConnectionModel(
@@ -21,7 +24,7 @@ class HomeViewModel extends ChangeNotifier {
   // Getters
   VitalSignsModel get vitalSigns => _vitalSigns;
   DeviceConnectionModel get connectionState => _connectionState;
-
+  bool get hasFileData => _hasFileData;
   bool get isConnected => _connectionState.isConnected;
   bool get isScanning => _connectionState.isScanning;
   bool get isDisconnected => _connectionState.isDisconnected;
@@ -91,6 +94,11 @@ class HomeViewModel extends ChangeNotifier {
       _connectionState = connection;
       notifyListeners();
     });
+
+    _fileNotifySubscription = _bluetoothService.fileNotifyStream.listen((_) {
+      _hasFileData = true;
+      notifyListeners();
+    });
   }
 
   Future<void> startScan() async {
@@ -111,6 +119,7 @@ class HomeViewModel extends ChangeNotifier {
   void dispose() {
     _vitalSignsSubscription?.cancel();
     _connectionSubscription?.cancel();
+    _fileNotifySubscription?.cancel();
     _bluetoothService.dispose();
     super.dispose();
   }

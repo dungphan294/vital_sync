@@ -58,10 +58,13 @@ class BLEService {
       StreamController<VitalSignsModel>.broadcast();
   final StreamController<DeviceConnectionModel> _connectionController =
       StreamController<DeviceConnectionModel>.broadcast();
+  final StreamController<bool> _fileNotifyController =
+      StreamController<bool>.broadcast();
 
   Stream<VitalSignsModel> get vitalSignsStream => _vitalSignsController.stream;
   Stream<DeviceConnectionModel> get connectionStream =>
       _connectionController.stream;
+  Stream<bool> get fileNotifyStream => _fileNotifyController.stream;
 
   VitalSignsModel _currentVitals = VitalSignsModel();
   DeviceConnectionModel _connectionState = DeviceConnectionModel(
@@ -79,6 +82,7 @@ class BLEService {
     _connectionSubscription?.cancel();
     _vitalSignsController.close();
     _connectionController.close();
+    _fileNotifyController.close();
     FlutterBluePlus.stopScan();
     _device?.disconnect();
   }
@@ -439,6 +443,7 @@ class BLEService {
         final jsonStr = utf8.decode(bytes);
         // Optional: validate JSON here
         await _sendToServer(jsonStr);
+        _fileNotifyController.add(true);
       } else {
         _buffer.add(value);
       }

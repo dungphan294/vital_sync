@@ -147,11 +147,16 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Widget _buildSyncButton(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.analytics, color: Theme.of(context).colorScheme.primary),
-      onPressed: () {
-        // Trigger sync action
-        _viewModel.manualRefresh();
+    return Consumer<HomeViewModel>(
+      builder: (context, viewModel, child) {
+        if (!viewModel.hasFileData) return const SizedBox.shrink();
+        return IconButton(
+          icon: Icon(Icons.sync, color: Theme.of(context).colorScheme.primary),
+          onPressed: () {
+            // Trigger sync action or open processing
+            viewModel.manualRefresh();
+          },
+        );
       },
     );
   }
