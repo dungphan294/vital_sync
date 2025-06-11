@@ -1,11 +1,12 @@
-from sqlalchemy import Column, String, Integer, TIMESTAMP, ForeignKey, ForeignKeyConstraint
+from sqlalchemy import Column, String, Integer, TIMESTAMP
 from backend.database import Base
+
 
 
 class Realtime(Base):
     __tablename__ = "realtime"
 
-    timestamp = Column(TIMESTAMP, primary_key=True)
+    timestamp = Column(TIMESTAMP)
     user_id = Column(String, nullable=True)
     phone_id = Column(String, nullable=True)
     device_id = Column(String, nullable=True)
@@ -15,14 +16,8 @@ class Realtime(Base):
     step_counts = Column(Integer)
 
 
-class Pagination(Realtime):
+class Pagination:
     """Pagination class for data retrieval."""
-    total: int = 0
-    total_pages: int = 0
-    current_page: int = 0
-    limit: int = 100
-    data: list[Realtime] = []
-
     def __init__(self, total: int, total_pages: int, current_page: int, limit: int, data: list[Realtime]):
         if data is None:
             data = []
