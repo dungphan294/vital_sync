@@ -1,4 +1,4 @@
-class WorkoutData {
+class Data {
   final String workoutId;
   final int heartRate;
   final int oxygenSaturation;
@@ -8,7 +8,7 @@ class WorkoutData {
   final String phoneId;
   final String deviceId;
 
-  WorkoutData({
+  Data({
     required this.workoutId,
     required this.heartRate,
     required this.oxygenSaturation,
@@ -19,8 +19,8 @@ class WorkoutData {
     required this.deviceId,
   });
 
-  factory WorkoutData.fromJson(Map<String, dynamic> json) {
-    return WorkoutData(
+  factory Data.fromJson(Map<String, dynamic> json) {
+    return Data(
       workoutId: json['workout_id'],
       heartRate: json['heart_rate'],
       oxygenSaturation: json['oxygen_saturation'],
@@ -33,14 +33,14 @@ class WorkoutData {
   }
 }
 
-class WorkoutResponse {
+class DataResponse {
   final int total;
   final int totalPages;
   final int currentPage;
   final int limit;
-  final List<WorkoutData> data;
+  final List<Data> data;
 
-  WorkoutResponse({
+  DataResponse({
     required this.total,
     required this.totalPages,
     required this.currentPage,
@@ -48,15 +48,13 @@ class WorkoutResponse {
     required this.data,
   });
 
-  factory WorkoutResponse.fromJson(Map<String, dynamic> json) {
-    return WorkoutResponse(
+  factory DataResponse.fromJson(Map<String, dynamic> json) {
+    return DataResponse(
       total: json['total'],
       totalPages: json['total_pages'],
       currentPage: json['current_page'],
       limit: json['limit'],
-      data: (json['data'] as List)
-          .map((item) => WorkoutData.fromJson(item))
-          .toList(),
+      data: (json['data'] as List).map((item) => Data.fromJson(item)).toList(),
     );
   }
 }

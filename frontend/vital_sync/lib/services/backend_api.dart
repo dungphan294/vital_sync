@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 class BackendApi {
+  final baseUrl = 'http://87.212.41.104:8000';
   late final Dio _dio;
-  static const String baseUrl = 'http://127.0.0.1:8000';
 
   BackendApi() {
     _dio = Dio(

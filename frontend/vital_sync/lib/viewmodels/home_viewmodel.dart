@@ -1,6 +1,8 @@
 // viewmodels/ble_home_viewmodel.dart
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
+import 'package:vital_sync/models/data_model.dart';
+import 'package:vital_sync/services/backend_api.dart';
 import 'dart:async';
 import '../models/vital_signs_model.dart';
 import '../models/device_connection_model.dart';
@@ -13,7 +15,7 @@ class HomeViewModel extends ChangeNotifier {
   StreamSubscription<VitalSignsModel>? _vitalSignsSubscription;
   StreamSubscription<DeviceConnectionModel>? _connectionSubscription;
   StreamSubscription<bool>? _fileNotifySubscription;
-
+  StreamSubscription<Data>? _dataSubscription;
   bool _hasFileData = false;
 
   VitalSignsModel _vitalSigns = VitalSignsModel();
@@ -77,14 +79,34 @@ class HomeViewModel extends ChangeNotifier {
 
   void initialize() {
     _subscribeToStreams();
+    // _apiToStream();
     startScan();
   }
+
+  // void _apiToStream() {
+  //   _vitalSigns = VitalSignsModel(
+  //     heartRate: data.heartRate,
+  //     spo2: data.oxygenSaturation,
+  //     steps: data.stepCounts,
+  //   );
+  //   notifyListeners();
+  // }
 
   void _subscribeToStreams() {
     _vitalSignsSubscription = _bluetoothService.vitalSignsStream.listen((
       vitals,
     ) {
       _vitalSigns = vitals;
+      BackendApi().post('/data/', {
+        'heart_rate': vitals.heartRate,
+        'oxygen_saturation': vitals.spo2,
+        'step_counts': vitals.steps,
+        'timestamp': vitals.timestamp.toIso8601String(),
+        'user_id': 'admin', // Replace with actual user ID
+        'phone_id': 'p001', // Replace with actual phone ID
+        'device_id': 'd001', // Replace with actual device ID
+        'workout_id': null, // Replace with actual workout ID
+      });
       notifyListeners();
     });
 

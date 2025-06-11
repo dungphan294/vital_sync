@@ -47,7 +47,6 @@ class _HomeViewState extends State<HomeView> {
                   delegate: SliverChildListDelegate([
                     _buildProfileButton(context),
                     _buildConnectionStatus(),
-                    // _buildApiGrid(),
                     _buildSyncButton(context),
                     _buildVitalSignsGrid(),
                   ]),
