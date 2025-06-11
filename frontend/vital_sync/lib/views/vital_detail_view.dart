@@ -86,7 +86,7 @@ class VitalDetailView extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
                     Text(
-                      "Detailed ${viewModel.title} data and history will be displayed here.",
+                      "Real-time ${viewModel.title} monitoring active",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,

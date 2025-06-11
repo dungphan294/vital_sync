@@ -25,7 +25,7 @@ class _NavigationBarWidgetState extends State<NavigationBarWidget> {
       unselectedItemColor: Colors.grey,
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Chatbot'),
+        // BottomNavigationBarItem(icon: Icon(Icons.message), label: 'Chatbot'),
         // BottomNavigationBarItem(
         //   icon: Icon(Icons.analytics),
         //   label: 'Analytics',

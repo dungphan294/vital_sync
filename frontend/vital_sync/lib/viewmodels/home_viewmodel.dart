@@ -1,7 +1,6 @@
 // viewmodels/ble_home_viewmodel.dart
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
-import 'package:vital_sync/models/data_model.dart';
 import 'package:vital_sync/services/backend_api.dart';
 import 'dart:async';
 import '../models/vital_signs_model.dart';

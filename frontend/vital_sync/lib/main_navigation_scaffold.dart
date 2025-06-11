@@ -18,7 +18,7 @@ class _MainNavigationScaffoldState extends State<MainNavigationScaffold> {
   final List<Widget> _pages = const [
     HomeView(),
     // AnalyticView(),
-    ChatbotView(), // Placeholder for Analytics, can be replaced
+    // ChatbotView(), // Placeholder for Analytics, can be replaced
     ProfileView(),
   ];
 

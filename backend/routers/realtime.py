@@ -76,15 +76,17 @@ def update_data(
         raise HTTPException(status_code=404, detail="Realtime not found")
     return realtime
 
-@router.delete("/", response_model=RealtimeResponse)
-def delete_data(
-    timestamp: Optional[str] = Query(None),
-    user_id: Optional[str] = Query(None),
-    phone_id: Optional[str] = Query(None),
-    device_id: Optional[str] = Query(None),
+
+@router.get("/current", response_model=int)
+def get_current_vital(
+    vital_type: str,
+    user_id: Optional[str] = None,
+    phone_id: Optional[str] = None,
+    device_id: Optional[str] = None,
+    workout_id: Optional[str] = None,
     db: Session = Depends(get_db)
-):
-    realtime = crud_data.delete_data(db, timestamp, user_id, phone_id, device_id)
-    if not realtime:
-        raise HTTPException(status_code=404, detail="Realtime not found")
-    return realtime
+) -> int:
+    value = crud_data.get_current_vital_value(db, vital_type, user_id, phone_id, device_id, workout_id)
+    if value is None:
+        raise HTTPException(status_code=404, detail="Vital not found")
+    return value

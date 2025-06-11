@@ -5,11 +5,11 @@ class ChatbotView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Grab the current primary colour (e.g. red) from the theme
+    final Color primary = Theme.of(context).colorScheme.primary;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chatbot'),
-        backgroundColor: Colors.blue,
-      ),
+      appBar: AppBar(title: const Text('Chatbot'), backgroundColor: Colors.red),
       body: Column(
         children: [
           Expanded(
@@ -44,7 +44,7 @@ class ChatbotView extends StatelessWidget {
                     // Handle send message
                   },
                   icon: const Icon(Icons.send),
-                  color: Colors.blue,
+                  color: Colors.red,
                 ),
               ],
             ),

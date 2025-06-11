@@ -42,6 +42,47 @@ def get_data_by_fields(
         query = query.filter(Realtime.workout_id == workout_id)
     return query.first()
 
+def get_current_vital_value(
+    db: Session,
+    vital_type: str,
+    user_id: Optional[str] = None,
+    phone_id: Optional[str] = None,
+    device_id: Optional[str] = None,
+    workout_id: Optional[str] = None
+) -> Optional[int]:
+    # Create base query
+    query = db.query(Realtime)
+
+    # Apply all filters in a dictionary comprehension
+    filters = {
+        Realtime.user_id: user_id,
+        Realtime.phone_id: phone_id,
+        Realtime.device_id: device_id,
+        Realtime.workout_id: workout_id
+    }
+
+    # Add only non-None filters
+    query = query.filter(
+        *(col == val for col, val in filters.items() if val is not None))
+
+    if vital_type == "heartRate":
+        query = query.filter(Realtime.heart_rate.is_not(None))
+        query = query.order_by(Realtime.timestamp.desc())
+        result = query.first()
+        return result.heart_rate if result else None
+    elif vital_type == "spo2":
+        query = query.filter(Realtime.oxygen_saturation.is_not(None))
+        query = query.order_by(Realtime.timestamp.desc())
+        result = query.first()
+        return result.oxygen_saturation if result else None
+    elif vital_type == "steps":
+        query = query.filter(Realtime.step_counts.is_not(None))
+        query = query.order_by(Realtime.timestamp.desc())
+        result = query.first()
+        return result.step_counts if result else None
+    else:
+        raise ValueError("Invalid vital type specified.")
+
 
 def search_data(
     db: Session,
