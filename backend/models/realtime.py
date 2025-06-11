@@ -5,7 +5,7 @@ from backend.database import Base
 
 class Realtime(Base):
     __tablename__ = "realtime"
-
+    id = Column(Integer, primary_key=True, autoincrement=True)
     timestamp = Column(TIMESTAMP)
     user_id = Column(String, nullable=True)
     phone_id = Column(String, nullable=True)
